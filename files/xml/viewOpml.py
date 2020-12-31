@@ -18,14 +18,11 @@ def loadFileByPath(filePath):
 	# return the found data
 	return data;
 
-def parseXml(sXml):
-	return XmlET.ElementTree(sXml)
-
 # defines our MAIN function
 def viewPickedOpml():
 	# have the use pick a file path
 	filePath = pickFilePath()
-	# verify the file path
+	# verify the file path is an opml file
 	if not filePath.endswith(".opml"):
 		# if we have the wrong file, tell the user and stop
 		print ("ERROR: wrong file type")
@@ -33,7 +30,23 @@ def viewPickedOpml():
 	# load file
 	text = loadFileByPath(filePath)
 	# parse file
-	xml = parseXml(text)
+	xml = XmlET.fromstring(text)
+	# find head
+	head = xml.find("./head")
+	# print title
+	print(head.find("./title").text)
+	# pull body
+	body = xml.find("./body")
+	# loop over body
+	for outline in body.findall("./outline"):
+		# add divider
+		print("---")
+		# pull title
+		print(outline.attrib["title"])
+		# pull feed
+		print(outline.attrib["xmlUrl"])
+		# pull home
+		print(outline.attrib["htmlUrl"])
 	
 # GO
 viewPickedOpml()
